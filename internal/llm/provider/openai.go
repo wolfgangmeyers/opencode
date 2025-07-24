@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"strings"
 	"time"
 
 	"github.com/openai/openai-go"
@@ -271,11 +272,15 @@ func (o *openaiClient) stream(ctx context.Context, messages []message.Message, t
 
 				for _, choice := range chunk.Choices {
 					if choice.Delta.Content != "" {
-						eventChan <- ProviderEvent{
-							Type:    EventContentDelta,
-							Content: choice.Delta.Content,
+						// Filter out tool call markers before forwarding content
+						content := choice.Delta.Content
+						if !strings.Contains(content, ToolBegin) && !strings.Contains(content, ToolEnd) {
+							eventChan <- ProviderEvent{
+								Type:    EventContentDelta,
+								Content: content,
+							}
+							currentContent += content
 						}
-						currentContent += choice.Delta.Content
 					}
 				}
 			}

@@ -15,6 +15,11 @@ type EventType string
 const maxRetries = 8
 
 const (
+	ToolBegin = "<|tool_calls_section_begin|>"
+	ToolEnd   = "<|tool_calls_section_end|>"
+)
+
+const (
 	EventContentStart  EventType = "content_start"
 	EventToolUseStart  EventType = "tool_use_start"
 	EventToolUseDelta  EventType = "tool_use_delta"
